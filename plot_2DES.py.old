@@ -1,0 +1,128 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from os.path import *
+'''
+    This script creates 2DES plot grid.
+    Each column is a fixed t2 fime and each row
+    is a fixed computation (H-Bonds, QM1, QM2, etc.)
+'''
+
+AU_2_EV = 27.211396132
+
+#   global plot properties
+rcParams = {
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'font.weight': 'bold',
+    'axes.labelsize': 14,
+    'axes.labelweight': 'extra bold'
+}
+plt.rcParams.update(rcParams)
+
+data_folders = {
+    'Stripped': ('../stripped/results/')
+}
+
+#   each directory should have the vee__2DES_XXX.dat files
+data_folders = ('../stripped/results', '../mm_4hb/results/', '../mm_C4/results', '../mm_qm1/results', '../../../experimental_data/twoDSpec_Converted/')
+# data_folders = data_folders[:3]
+file_nums = (12, 50, 100)       # 2DES files labeled vee__2DES_XXX.dat 
+dt = 4                          # t2 time step in femtoseconds
+titles = ['Stripped', 'H-bonded', 'Closest 4', 'QM1']
+
+fig_height = 1.8*len(data_folders) + 0.5
+fig, ax_grid = plt.subplots(
+    len(data_folders), 
+    len(file_nums), 
+    figsize=np.array((6.2,fig_height))*1.2,
+    )
+
+min_pos = None
+ideal_max_pos = (2.1, 2.1)
+ref_bottom_corner = None
+colormap_name = 'jet'
+
+x_lims = []
+y_lims = []
+
+for i, dir in enumerate(data_folders):
+    for j, num in enumerate(file_nums):
+        ax = ax_grid[i, j]
+
+        #   import data, first try to load an uncompressed compressed version
+        data_file = join(dir, 'vee__2DES_{:d}.dat'.format(num))
+        if isfile(data_file):
+            data = np.loadtxt(data_file)
+        else:
+            data = np.loadtxt(data_file + '.gz')
+        dim = int(np.sqrt(data.shape[0]))
+        data[:, 0:2] *= AU_2_EV
+        
+        #   recenter data at experimental maximum
+        #   further data are then centered by it's bottom corner
+        if min_pos is None:
+            min_loc = np.argmax(data[:, 2])
+            min_pos = data[min_loc, 0:2].copy()
+            data[:, 0:2] += (ideal_max_pos- min_pos)
+            ref_bottom_corner = np.min(data, axis=0)[0:2]
+        bottom_corner = np.min(data, axis=0)[0:2]
+        data[:, 0:2] += (ref_bottom_corner - bottom_corner)
+
+        X = data[:,0].reshape(dim,dim)
+        Y = data[:,1].reshape(dim,dim)
+        Z = data[:,2].reshape(dim,dim)
+        Z /= np.max(Z)
+        Z[np.where(Z < 0)] = 0.0
+
+        contour = ax.contourf(X,Y,Z, dim,cmap=colormap_name)
+
+        #   x-ticks and labels are only on the bottom plots
+        if i == len(data_folders) - 1:
+            ax.set_xticks([2.0, 2.1, 2.2, 2.3])
+            ax.set_xlabel('$\omega_1$ (eV)')
+        else:
+            ax.set_xticks([])
+
+        #   y-ticks and labels are only on the left-most plots
+        if j == 0:
+            ax.set_yticks([2.0, 2.1, 2.2, 2.3])
+            ax.set_ylabel('$\omega_3$ (eV)')
+        else:
+            ax.set_yticks([])
+
+        #   T2 time label
+        ax.text(0.95, 0.01, '{:d} fs'.format(dt*num),
+            verticalalignment='bottom', horizontalalignment='right',
+            transform=ax.transAxes,
+            color='white', fontsize=16)
+        
+        #   MM environment label
+        if j == 0:
+            ax.text(0.05, 0.95, titles[i],
+                verticalalignment='top', horizontalalignment='left',
+                transform=ax.transAxes,
+                color='white', fontsize=16)
+
+        x_lims.append(ax.get_xlim())
+        y_lims.append(ax.get_ylim())
+
+min_min_freq = min(np.min(x_lims), np.min(y_lims))
+min_max_freq = min(np.max(x_lims), np.max(y_lims))
+
+for ax in ax_grid.flatten():
+    pass
+    # ax.set_xlim(xmin=min_min_freq, xmax=min_max_freq)
+    # ax.set_xbound(lower=min_min_freq, upper=min_max_freq)
+    # ax.set_ylim(ymin=min_min_freq, ymax=min_max_freq)
+    # ax.axis('equal')
+    for spine in ax.spines.values():
+        spine.set_edgecolor('white')
+
+
+# fig.colorbar(contour)
+fig.tight_layout()
+plt.subplots_adjust(wspace=0.05,
+                    hspace=0.05)
+
+fig.savefig('aimd_mm_env_1.png', dpi=300)
+plt.show()
