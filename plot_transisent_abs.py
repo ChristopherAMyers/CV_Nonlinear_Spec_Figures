@@ -1,35 +1,25 @@
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as PathEffects
 import numpy as np
-import sys
+import global_settings as GS
 from os.path import *
 
 AU_2_EV = 27.211396132
 AU_2_FS = 0.02418884254
 
 #   global plot properties
-fontsize = 12
-rcParams = {
-    'xtick.labelsize': fontsize,
-    'ytick.labelsize': fontsize,
-    'font.weight': 'bold',
-    'axes.labelsize': fontsize,
-    'axes.labelweight': 'extra bold',
-    'figure.labelsize': fontsize,
-    'figure.labelweight': 'bold',
-}
-plt.rcParams.update(rcParams)
-
+fontsize = plt.rcParams['axes.labelsize']
 
 data_files = (
-    '../stripped/results/vee__2nd_order_cumulant_transient_absorption_spec.txt', 
-    '../mm_4hb/results/vee__2nd_order_cumulant_transient_absorption_spec.txt', 
-    '../mm_C4/results/vee__2nd_order_cumulant_transient_absorption_spec.txt', 
-    '../mm_qm1/results/vee__2nd_order_cumulant_transient_absorption_spec.txt',
-    '../../../experimental_data/transient_abs.txt'
+    GS.data_root_dir + 'gs-aimd/stripped/results/vee__2nd_order_cumulant_transient_absorption_spec.txt', 
+    GS.data_root_dir + 'gs-aimd/mm_4hb/results/vee__2nd_order_cumulant_transient_absorption_spec.txt', 
+    GS.data_root_dir + 'gs-aimd/mm_C4/results/vee__2nd_order_cumulant_transient_absorption_spec.txt', 
+    GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2nd_order_cumulant_transient_absorption_spec.txt',
+    GS.data_root_dir + 'gs-aimd/qm2/results/vee__2nd_order_cumulant_transient_absorption_spec.txt',
+    GS.data_root_dir + 'experimental_data/transient_abs.txt'
     )
 dt = 4 #    in femtoseconds
-titles = ['Stripped', 'H-bonded', 'Closest 4', 'QM1', 'EXP']
+titles = ['Stripped', 'H-bonded', 'Closest 4', 'QM1', 'QM2', 'EXP']
 
 length = 1.8*len(data_files) + 0.5
 fig, ax_grid = plt.subplots(1, len(data_files), figsize=np.array((length,2.9))*1.2)
@@ -127,5 +117,5 @@ fig.tight_layout()
 # plt.subplots_adjust(wspace=0.1,
                     # hspace=0.5)
 
-fig.savefig('transient_abs.png', dpi=300)
+fig.savefig('png/transient_abs.png', dpi=300)
 plt.show()

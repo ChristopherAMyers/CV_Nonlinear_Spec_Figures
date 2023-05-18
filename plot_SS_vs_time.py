@@ -12,11 +12,11 @@ AU_2_FS = 0.02418884254
 #   global plot properties
 
 data_folders = (
-    GS.data_root_dir + 'stripped/results', 
-    GS.data_root_dir + 'mm_4hb/results', 
-    GS.data_root_dir + 'mm_C4/results', 
-    GS.data_root_dir + 'mm_qm1/results', 
-    GS.data_root_dir + 'qm2/results')
+    GS.data_root_dir + 'gs-aimd/stripped/results', 
+    GS.data_root_dir + 'gs-aimd/mm_4hb/results', 
+    GS.data_root_dir + 'gs-aimd/mm_C4/results', 
+    GS.data_root_dir + 'gs-aimd/mm_qm1/results', 
+    GS.data_root_dir + 'gs-aimd/qm2/results')
 dt = 4 #    in femtoseconds
 titles = ['Stripped', 'H-bonded', 'Pi Solvent', 'QM1', 'QM2']
 colors = ['black', '#21ADEF', '#D321FF', 'red', 'blue']
@@ -118,5 +118,5 @@ ax.set_ylim(1.8, 2.13)
 ax.set_xlim(0, 500)
 fig.tight_layout()
 
-fig.savefig('SS_vs_Time.png', dpi=300)
+fig.savefig('png/SS_vs_Time.png', dpi=300)
 plt.show()

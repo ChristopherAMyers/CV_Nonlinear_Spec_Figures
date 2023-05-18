@@ -144,5 +144,5 @@ fig.tight_layout()
 plt.subplots_adjust(wspace=0.05,
                     hspace=0.05)
 
-fig.savefig('png/aimd_2DES_solvent_2.png', dpi=600)
+fig.savefig('png/2DES_solvent_2.png', dpi=600)
 plt.show()
