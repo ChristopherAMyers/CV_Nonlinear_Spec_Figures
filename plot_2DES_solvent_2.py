@@ -23,25 +23,15 @@ plt.rcParams.update(rcParams)
 #   each key is the text that will be placed on each plot.
 #   within each key are the lists of data files to use.
 plot_info = {
-    # 'Stripped': (
-    # '../stripped/results/vee__2DES_12.dat',
-    # '../stripped/results/vee__2DES_50.dat',
-    # '../stripped/results/vee__2DES_100.dat'),
-
-    'QUBEKit': (
-    GS.data_root_dir + 'gs-ffmd/mm_qm1/results/vee__2DES_12.dat',
-    GS.data_root_dir + 'gs-ffmd/mm_qm1/results/vee__2DES_50.dat',
-    GS.data_root_dir + 'gs-ffmd/mm_qm1/results/vee__2DES_100.dat'),
-
-    'QUBEKit(MK)': (
-    GS.data_root_dir + 'gs-ffmd-MK/mm_qm1/results/vee__2DES_12.dat',
-    GS.data_root_dir + 'gs-ffmd-MK/mm_qm1/results/vee__2DES_50.dat',
-    GS.data_root_dir + 'gs-ffmd-MK/mm_qm1/results/vee__2DES_100.dat'),
-
-    'AIMD': (
+    'QM1': (
     GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_12.dat',
     GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_50.dat',
     GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_100.dat'),
+
+    'QM2': (
+    GS.data_root_dir + 'gs-aimd/qm2/results/vee__2DES_12.dat',
+    GS.data_root_dir + 'gs-aimd/qm2/results/vee__2DES_50.dat',
+    GS.data_root_dir + 'gs-aimd/qm2/results/vee__2DES_100.dat'),
 
     'Experiment': (
     GS.data_root_dir + 'experimental_data/twoDSpec_Converted/twoDSpecMat_14.dat',
@@ -122,14 +112,14 @@ for i, (title, files) in enumerate(plot_info.items()):
         ax.text(0.95, 0.01, '{:d} fs'.format(t2_times[j]),
             verticalalignment='bottom', horizontalalignment='right',
             transform=ax.transAxes,
-            color='white', fontsize=18)
+            color='white', fontsize=16)
         
         #   MM environment label
         if j == 0:
             ax.text(0.05, 0.95, title,
                 verticalalignment='top', horizontalalignment='left',
                 transform=ax.transAxes,
-                color='white', fontsize=18)
+                color='white', fontsize=16)
 
         x_lims.append(ax.get_xlim())
         y_lims.append(ax.get_ylim())
@@ -154,5 +144,5 @@ fig.tight_layout()
 plt.subplots_adjust(wspace=0.05,
                     hspace=0.05)
 
-fig.savefig('png/2DES_models.png', dpi=600)
+fig.savefig('png/aimd_2DES_solvent_2.png', dpi=600)
 plt.show()

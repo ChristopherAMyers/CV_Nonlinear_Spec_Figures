@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from os.path import *
+import global_settings as GS
 '''
     This script creates 2DES plot grid.
     Each column is a fixed t2 fime and each row
@@ -11,10 +12,10 @@ AU_2_EV = 27.211396132
 
 #   global plot properties
 rcParams = {
-    'xtick.labelsize': 12,
-    'ytick.labelsize': 12,
+    'xtick.labelsize': 14,
+    'ytick.labelsize': 14,
     'font.weight': 'bold',
-    'axes.labelsize': 14,
+    'axes.labelsize': 16,
     'axes.labelweight': 'extra bold'
 }
 plt.rcParams.update(rcParams)
@@ -22,30 +23,20 @@ plt.rcParams.update(rcParams)
 #   each key is the text that will be placed on each plot.
 #   within each key are the lists of data files to use.
 plot_info = {
-    # 'Stripped': (
-    # '../stripped/results/vee__2DES_12.dat',
-    # '../stripped/results/vee__2DES_50.dat',
-    # '../stripped/results/vee__2DES_100.dat'),
+    'Stripped': (
+    GS.data_root_dir + 'gs-aimd/stripped/results/vee__2DES_12.dat',
+    GS.data_root_dir + 'gs-aimd/stripped/results/vee__2DES_50.dat',
+    GS.data_root_dir + 'gs-aimd/stripped/results/vee__2DES_100.dat'),
 
     'H-bonded': (
-    '../mm_4hb/results/vee__2DES_12.dat',
-    '../mm_4hb/results/vee__2DES_50.dat',
-    '../mm_4hb/results/vee__2DES_100.dat'),
+    GS.data_root_dir + 'gs-aimd/mm_4hb/results/vee__2DES_12.dat',
+    GS.data_root_dir + 'gs-aimd/mm_4hb/results/vee__2DES_50.dat',
+    GS.data_root_dir + 'gs-aimd/mm_4hb/results/vee__2DES_100.dat'),
 
     'Pi Solvent': (
-    '../mm_C4/results/vee__2DES_12.dat',
-    '../mm_C4/results/vee__2DES_50.dat',
-    '../mm_C4/results/vee__2DES_100.dat'),
-
-    'QM1': (
-    '../mm_qm1/results/vee__2DES_12.dat',
-    '../mm_qm1/results/vee__2DES_50.dat',
-    '../mm_qm1/results/vee__2DES_100.dat'),
-
-    'Experiment': (
-    '../../../experimental_data/twoDSpec_Converted/twoDSpecMat_14.dat',
-    '../../../experimental_data/twoDSpec_Converted/twoDSpecMat_37.dat',
-    '../../../experimental_data/twoDSpec_Converted/twoDSpecMat_67.dat',),
+    GS.data_root_dir + 'gs-aimd/mm_C4/results/vee__2DES_12.dat',
+    GS.data_root_dir + 'gs-aimd/mm_C4/results/vee__2DES_50.dat',
+    GS.data_root_dir + 'gs-aimd/mm_C4/results/vee__2DES_100.dat'),
 }
 t2_times = [50, 200, 400] # t2 times in femtoseconds
 
@@ -153,5 +144,5 @@ fig.tight_layout()
 plt.subplots_adjust(wspace=0.05,
                     hspace=0.05)
 
-fig.savefig('aimd_2DES_solvent.png', dpi=600)
+fig.savefig('png/2DES_solvent_1.png', dpi=600)
 plt.show()
