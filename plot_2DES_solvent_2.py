@@ -77,17 +77,6 @@ for i, (title, files) in enumerate(plot_info.items()):
         dim_x = len(unique_x)
         dim_y = len(unique_y)
 
-        
-        #   recenter data at experimental maximum
-        #   further data are then centered by it's bottom corner
-        # if min_pos is None:
-        #     min_loc = np.argmax(data[:, 2])
-        #     min_pos = data[min_loc, 0:2].copy()
-        #     data[:, 0:2] += (ideal_max_pos- min_pos)
-        #     ref_bottom_corner = np.min(data, axis=0)[0:2]
-        # bottom_corner = np.min(data, axis=0)[0:2]
-        # data[:, 0:2] += (ref_bottom_corner - bottom_corner)
-
         if min_pos is None:
             min_loc = np.argmax(data[:, 2])
             min_pos = data[min_loc, 0:2].copy()
