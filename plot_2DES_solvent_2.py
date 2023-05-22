@@ -24,21 +24,22 @@ plt.rcParams.update(rcParams)
 #   within each key are the lists of data files to use.
 plot_info = {
     'QM1': (
-    GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_12.dat',
+    # GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_12.dat',
+    GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_1.dat',
     GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_50.dat',
     GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_100.dat'),
 
     'QM2': (
-    GS.data_root_dir + 'gs-aimd/qm2/results/vee__2DES_12.dat',
+    GS.data_root_dir + 'gs-aimd/qm2/results/vee__2DES_1.dat',
     GS.data_root_dir + 'gs-aimd/qm2/results/vee__2DES_50.dat',
     GS.data_root_dir + 'gs-aimd/qm2/results/vee__2DES_100.dat'),
 
     'Experiment': (
-    GS.data_root_dir + 'experimental_data/twoDSpec_Converted/twoDSpecMat_14.dat',
+    GS.data_root_dir + 'experimental_data/twoDSpec_Converted/twoDSpecMat_7.dat',
     GS.data_root_dir + 'experimental_data/twoDSpec_Converted/twoDSpecMat_37.dat',
     GS.data_root_dir + 'experimental_data/twoDSpec_Converted/twoDSpecMat_67.dat',),
 }
-t2_times = [50, 200, 400] # t2 times in femtoseconds
+t2_times = [0, 200, 400] # t2 times in femtoseconds
 
 fig_height = 1.8*len(plot_info) + 0.5
 n_rows = len(plot_info)
@@ -49,7 +50,8 @@ fig, ax_grid = plt.subplots(
     figsize=np.array((6.2,fig_height))*1.2,
     )
 
-ideal_max_pos = (2.088511, 2.088511)
+# ideal_max_pos = (2.088511, 2.088511)
+ideal_max_pos = (2.05149689, 2.03809733)
 ref_bottom_corner = None
 colormap_name = 'jet'
 
@@ -78,13 +80,21 @@ for i, (title, files) in enumerate(plot_info.items()):
         
         #   recenter data at experimental maximum
         #   further data are then centered by it's bottom corner
+        # if min_pos is None:
+        #     min_loc = np.argmax(data[:, 2])
+        #     min_pos = data[min_loc, 0:2].copy()
+        #     data[:, 0:2] += (ideal_max_pos- min_pos)
+        #     ref_bottom_corner = np.min(data, axis=0)[0:2]
+        # bottom_corner = np.min(data, axis=0)[0:2]
+        # data[:, 0:2] += (ref_bottom_corner - bottom_corner)
+
         if min_pos is None:
             min_loc = np.argmax(data[:, 2])
             min_pos = data[min_loc, 0:2].copy()
-            data[:, 0:2] += (ideal_max_pos- min_pos)
-            ref_bottom_corner = np.min(data, axis=0)[0:2]
-        bottom_corner = np.min(data, axis=0)[0:2]
-        data[:, 0:2] += (ref_bottom_corner - bottom_corner)
+            shift = ideal_max_pos- min_pos
+        if i != 2:
+            data[:, 0:2] += shift
+
 
         X = data[:,0].reshape(dim_y,dim_x)
         Y = data[:,1].reshape(dim_y,dim_x)
@@ -123,8 +133,10 @@ for i, (title, files) in enumerate(plot_info.items()):
 
         x_lims.append(ax.get_xlim())
         y_lims.append(ax.get_ylim())
-        ax.set_xlim(1.85, 2.35)
-        ax.set_ylim(1.85, 2.35)
+        ax.set_xlim(1.85, 2.32)
+        ax.set_ylim(1.85, 2.32)
+
+        ax.plot(ax.get_ylim(), ax.get_ylim(), color='white', linestyle='--', linewidth=1.5)
 
 min_min_freq = min(np.min(x_lims), np.min(y_lims))
 min_max_freq = min(np.max(x_lims), np.max(y_lims))

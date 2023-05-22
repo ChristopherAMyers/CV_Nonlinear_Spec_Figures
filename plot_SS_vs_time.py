@@ -12,11 +12,18 @@ AU_2_FS = 0.02418884254
 
 def run_analysis(ax=None):
     data_folders = (
-        GS.data_root_dir + 'gs-aimd/stripped/results', 
-        GS.data_root_dir + 'gs-aimd/mm_4hb/results', 
-        GS.data_root_dir + 'gs-aimd/mm_C4/results', 
-        GS.data_root_dir + 'gs-aimd/mm_qm1/results', 
-        GS.data_root_dir + 'gs-aimd/qm2/results')
+        # GS.data_root_dir + 'gs-aimd/stripped/results', 
+        # GS.data_root_dir + 'gs-aimd/mm_4hb/results', 
+        # GS.data_root_dir + 'gs-aimd/mm_C4/results', 
+        # GS.data_root_dir + 'gs-aimd/mm_qm1/results', 
+        # GS.data_root_dir + 'gs-aimd/qm2/results',
+    
+        GS.data_root_dir + 'gs-aimd-longer/stripped/', 
+        GS.data_root_dir + 'gs-aimd-longer/mm_4hb/', 
+        GS.data_root_dir + 'gs-aimd-longer/mm_C4/', 
+        GS.data_root_dir + 'gs-aimd-longer/mm_qm1/', 
+        GS.data_root_dir + 'gs-aimd-longer/qm2/',
+    )
     dt = 4 #    in femtoseconds
     titles = ['Stripped', 'H-bonded', 'Pi Solvent', 'QM1', 'QM2']
     save_names = ['stripped', 'mm_4hb', 'mm_C4', 'mm_qm1', 'qm2']
@@ -41,6 +48,7 @@ def run_analysis(ax=None):
         else:
             data = np.loadtxt(data_file + '.gz')
         data[:, 1] *= AU_2_EV
+        print(data.shape)
         
         #   reshape data
         n_pts_per_time = len(set(data[:, 1]))
@@ -52,8 +60,14 @@ def run_analysis(ax=None):
         absorptions = []
         emissions_interps = []
         absorptions_interps = []
+        keep_times = []
         shift = None
         for j, spectra in enumerate(data):
+            
+            if np.sum(np.isnan(spectra)) > 0:
+                print("Skipping ", j)
+                continue
+
             spectra[:, 1] /= np.max(spectra[:, 1])
             # spectra[:, 0] += shift_freq
             #   first split the spectrum by from the location of the maximum
@@ -103,15 +117,17 @@ def run_analysis(ax=None):
             emissions.append(emiss_avg + shift)
             absorptions.append(abs_avg + shift)
 
+            keep_times.append(times[j])
+
         if ax is not None:
             if interpolate:
-                ax.plot(times, absorptions_interps, color=colors[i], linestyle='--')
-                ax.plot(times, emissions_interps, color=colors[i], label=titles[i])
+                ax.plot(keep_times, absorptions_interps, color=colors[i], linestyle='--')
+                ax.plot(keep_times, emissions_interps, color=colors[i], label=titles[i])
             else:
-                ax.plot(times, absorptions, color=colors[i], linestyle='--')
-                ax.plot(times, emissions, color=colors[i], label=titles[i])
+                ax.plot(keep_times, absorptions, color=colors[i], linestyle='--')
+                ax.plot(keep_times, emissions, color=colors[i], label=titles[i])
 
-        out_data = np.array([times, absorptions, emissions, absorptions_interps, emissions_interps]).T
+        out_data = np.array([keep_times, absorptions, emissions, absorptions_interps, emissions_interps]).T
         np.savetxt('stokes_shift/{:s}.txt'.format(save_names[i]), out_data, 
                 header='time (fs) absorption(nearest) emission(nearest) absorption(interp) emission(interp)')
 
@@ -124,7 +140,7 @@ if __name__ == '__main__':
     ax.set_xlabel('Time (fs)')
     ax.set_ylabel("$E_\mathrm{GSB}$ / $E_\mathrm{SE} $ (eV)")
     ax.set_ylim(1.8, 2.13)
-    ax.set_xlim(0, 500)
+    ax.set_xlim(0, 1000)
 
     fig.tight_layout()
     fig.savefig('png/SS_vs_Time.png', dpi=300)
