@@ -23,16 +23,21 @@ plt.rcParams.update(rcParams)
 #   each key is the text that will be placed on each plot.
 #   within each key are the lists of data files to use.
 plot_info = {
-    'QM1': (
-    # GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_12.dat',
-    GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_1.dat',
+    'Peripheral': (
+    GS.data_root_dir + 'gs-aimd/mm_4hb/results/vee__2DES_12.dat',
+    GS.data_root_dir + 'gs-aimd/mm_4hb/results/vee__2DES_50.dat',
+    GS.data_root_dir + 'gs-aimd/mm_4hb/results/vee__2DES_100.dat'),
+
+    'Axial': (
+    GS.data_root_dir + 'gs-aimd/mm_C4/results/vee__2DES_12.dat',
+    GS.data_root_dir + 'gs-aimd/mm_C4/results/vee__2DES_50.dat',
+    GS.data_root_dir + 'gs-aimd/mm_C4/results/vee__2DES_100.dat'),
+
+    'Full MM': (
+    GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_12.dat',
+    # GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_1.dat',
     GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_50.dat',
     GS.data_root_dir + 'gs-aimd/mm_qm1/results/vee__2DES_100.dat'),
-
-    'QM2': (
-    GS.data_root_dir + 'gs-aimd/qm2/results/vee__2DES_1.dat',
-    GS.data_root_dir + 'gs-aimd/qm2/results/vee__2DES_50.dat',
-    GS.data_root_dir + 'gs-aimd/qm2/results/vee__2DES_100.dat'),
 
     'Experiment': (
     GS.data_root_dir + 'experimental_data/twoDSpec_Converted/cropped_data/twoDSpecMat_7.dat',
@@ -82,7 +87,7 @@ for i, (title, files) in enumerate(plot_info.items()):
             min_loc = np.argmax(data[:, 2])
             min_pos = data[min_loc, 0:2].copy()
             shift = ideal_max_pos- min_pos
-        if i != 2:
+        if i != len(plot_info) - 1:
             data[:, 0:2] += shift
 
         print(dim_x, dim_y)
@@ -147,5 +152,5 @@ fig.tight_layout()
 plt.subplots_adjust(wspace=0.05,
                     hspace=0.05)
 
-fig.savefig('png/2DES_solvent_2.png', dpi=600)
+fig.savefig('png/2DES_solvent_poster.png', dpi=400)
 plt.show()

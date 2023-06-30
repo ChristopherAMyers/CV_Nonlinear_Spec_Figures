@@ -70,8 +70,25 @@ def run_analysis(ax=None):
 
             spectra[:, 1] /= np.max(spectra[:, 1])
             # spectra[:, 0] += shift_freq
-            #   first split the spectrum by from the location of the maximum
+
+            #   First split the spectrum by from the location of the maximum.
+            #   We also need to make sure that the maximum is not at the
+            #   end points. This comes up when the transient-abs is periodic.
+            #   Also, we keep trimming until the last and first 10% of points
+            #   are also no greater than 1/2.
+
+            dim = spectra.shape[0]
             idx_of_maximum = np.argmax(spectra[:, 1])
+            max_first_10 = np.max(spectra[0:int(dim*0.1)])
+            max_last_10 = np.max(spectra[int(dim*0.9):])
+            while idx_of_maximum/dim < 0.1 or idx_of_maximum/dim > 0.9 or max_last_10 > 0.5 or max_first_10 > 0.5:
+                spectra = spectra[1:]
+                spectra = spectra[0:-1]
+                dim = spectra.shape[0]
+                idx_of_maximum = np.argmax(spectra[:, 1])
+                max_first_10 = np.max(spectra[0:int(dim*0.1), 1])
+                max_last_10 = np.max(spectra[int(dim*0.9):, 1])
+                
             spectra_1 = spectra[0:idx_of_maximum]
             spectra_2 = spectra[idx_of_maximum:]
 
@@ -99,7 +116,14 @@ def run_analysis(ax=None):
                 idx_neg = idx_pos - 1
             else:
                 idx_neg = idx_pos + 1
-            abs_f1, abs_f2 = freq_2[idx_pos], freq_2[idx_neg]
+
+            try:
+                abs_f1, abs_f2 = freq_2[idx_pos], freq_2[idx_neg]
+            except:
+                fig2, ax2 = plt.subplots()
+                ax2.plot(spectra[:, 1])
+                plt.show()
+                exit()
             abs_i1, abs_i2 = intensity_2[idx_pos], intensity_2[idx_neg]
             abs_avg = 0.5*(abs_f1 + abs_f2)
             
@@ -110,6 +134,14 @@ def run_analysis(ax=None):
             solution_a = abs_f1 - abs_i1/slope_a
             if shift is None:
                 shift = (ideal_max_pos - solution_a)
+
+            if abs_avg + shift < 1.5 and i == 3:
+                print("PLOT: ", j, idx_neg, idx_pos)
+                fig2, ax2 = plt.subplots()
+                ax2.plot(*spectra.T, marker='.')
+                ax2.hlines(0, 2.0, 4.0)
+                plt.show()
+                exit()
                 
             emissions_interps.append(solution_e + shift)
             absorptions_interps.append(solution_a + shift)
@@ -118,6 +150,7 @@ def run_analysis(ax=None):
             absorptions.append(abs_avg + shift)
 
             keep_times.append(times[j])
+
 
         if ax is not None:
             if interpolate:
@@ -139,8 +172,8 @@ if __name__ == '__main__':
     ax.legend(ncol=2)
     ax.set_xlabel('Time (fs)')
     ax.set_ylabel("$E_\mathrm{GSB}$ / $E_\mathrm{SE} $ (eV)")
-    ax.set_ylim(1.8, 2.13)
-    ax.set_xlim(0, 1000)
+    ax.set_ylim(1.78, 2.13)
+    ax.set_xlim(-5, 1300)
 
     fig.tight_layout()
     fig.savefig('png/SS_vs_Time.png', dpi=300)
