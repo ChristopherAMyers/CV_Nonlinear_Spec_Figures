@@ -1,11 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from plot_SS_vs_time import run_analysis
+from plot_JA_method import run_analysis
 import global_settings as GS
-from scipy.fft import fft, fftfreq
 from scipy.optimize import curve_fit
-from scipy.interpolate import interp1d
-from FourierTransform import *
+from os.path import join
+from FourierTransform import explicitFourierTransform
 
 def exp_func(t, a, b, c):
     return a * np.exp(-t/b) + c
@@ -18,18 +17,19 @@ AU_2_CM = 219474.63
 fig, ax = plt.subplots(figsize=np.array((7, 5))*1.1)
 
 data_files = (
-    'stokes_shift/stripped.txt', 
-    'stokes_shift/mm_4hb.txt', 
-    'stokes_shift/mm_C4.txt', 
-    'stokes_shift/mm_qm1.txt', 
-    'stokes_shift/qm2.txt')
+    join('SS_results', 'JA_method_stripped.txt'),
+    join('SS_results', 'JA_method_mm_4hb.txt'),
+    join('SS_results', 'JA_method_mm_C4.txt'),
+    join('SS_results', 'JA_method_mm_qm1.txt'),
+    join('SS_results', 'JA_method_qm2.txt'),
+)
 dt = 4 #    in femtoseconds
 titles = ['Stripped', 'H-bonded', 'Pi Solvent', 'QM1', 'QM2']
 save_names = ['stripped', 'mm_4hb', 'mm_C4', 'mm_qm1', 'qm2']
 colors = ['black', '#21ADEF', '#D321FF', 'red', 'blue']
 
 #   first run stokes shift plot
-run_analysis()
+# run_analysis()
 
 
 for i in range(len(data_files)):
@@ -41,8 +41,6 @@ for i in range(len(data_files)):
     times = times[keep]/AU_2_FS
     # ss_original = data[:, 3] - data[:, 4]
     ss_original = data[:, 4]
-
-
 
     #   fit exponential to stokes shift
     popt, pcov = curve_fit(exp_func, times, ss_original, maxfev=10000, p0=(0.1, 10000, 2))

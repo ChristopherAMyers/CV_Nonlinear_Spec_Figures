@@ -1,4 +1,5 @@
 .DS_Store
 tests/
 __pycache__/
-stokes_shift/
+stokes_shift/png
+stokes_shift/SS_results

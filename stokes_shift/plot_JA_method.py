@@ -2,27 +2,19 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 import global_settings as GS
-from os.path import *
+from os.path import join, isfile
 from os import makedirs
-from scipy.interpolate import interp1d
-from scipy.optimize import root
 
 AU_2_EV = 27.211396132
 AU_2_FS = 0.02418884254
 
 def run_analysis(ax=None):
     data_folders = (
-        # GS.data_root_dir + 'gs-aimd/stripped/results', 
-        # GS.data_root_dir + 'gs-aimd/mm_4hb/results', 
-        # GS.data_root_dir + 'gs-aimd/mm_C4/results', 
-        # GS.data_root_dir + 'gs-aimd/mm_qm1/results', 
-        # GS.data_root_dir + 'gs-aimd/qm2/results',
-    
-        GS.data_root_dir + 'gs-aimd-longer/stripped/', 
-        GS.data_root_dir + 'gs-aimd-longer/mm_4hb/', 
-        GS.data_root_dir + 'gs-aimd-longer/mm_C4/', 
-        GS.data_root_dir + 'gs-aimd-longer/mm_qm1/', 
-        GS.data_root_dir + 'gs-aimd-longer/qm2/',
+        join(GS.data_root_dir, 'gs-aimd-longer/stripped/'), 
+        join(GS.data_root_dir, 'gs-aimd-longer/mm_4hb/'), 
+        join(GS.data_root_dir, 'gs-aimd-longer/mm_C4/'), 
+        join(GS.data_root_dir, 'gs-aimd-longer/mm_qm1/'), 
+        join(GS.data_root_dir, 'gs-aimd-longer/qm2/'),
     )
     dt = 4 #    in femtoseconds
     titles = ['Stripped', 'H-bonded', 'Pi Solvent', 'QM1', 'QM2']
@@ -135,6 +127,7 @@ def run_analysis(ax=None):
             if shift is None:
                 shift = (ideal_max_pos - solution_a)
 
+            #   debugging only
             if abs_avg + shift < 1.5 and i == 3:
                 print("PLOT: ", j, idx_neg, idx_pos)
                 fig2, ax2 = plt.subplots()

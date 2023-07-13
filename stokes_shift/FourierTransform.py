@@ -51,7 +51,8 @@ def explicitFourierTransform(t, y, freq, num_points=100, interp_func=None, inter
     #   compute fft and it's corresponding frequencies
     dT = times[1] - times[0]
     N = freq.shape[0]
-    ft = np.zeros(N)
+    ft = np.zeros(N, dtype=np.complex128)
+    # ft = np.zeros(N, dtype=np.float64)
     for j in range(N):
         integrand = np.exp(1j*freq[j]*times)*y
         ft[j] = simpson(integrand, times)
